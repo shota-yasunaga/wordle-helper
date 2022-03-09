@@ -10,17 +10,13 @@ dictionary_search = True
 guesses = [
     "PANTS",
     "FJORD",
-    "CHEWY",
-    "VINER",
-    "LUMBI",
+    "CHEWY"
 ]
 
 scores = [
+    "BBGGB",
     "BBYBB",
-    "BBBYB",
-    "BBYBB",
-    "BYYYY",
-    "BBBYY"
+    "BYBBB"
 ]
 
 def input_validation(guesses, scores):
@@ -39,15 +35,14 @@ def convert_to_loc_limitation(guesses,scores):
     need_to_use = set()
     for guess, score in zip(guesses, scores):
         for char, sc, ind in zip(guess, score, range(5)):
-            option = options[ind]
             if sc == "G":
-                if char not in option:
+                if char not in options[ind]:
                     raise RuntimeError("There is contradiction somewhere.")
-                option = set(char)
+                options[ind] = set(char)
                 # there are edge cases where multiple of the same characters exist in a word
                 need_to_use.discard(char)
             if sc == "Y":
-                option.discard(char)
+                options[ind].discard(char)
                 need_to_use.add(char)
             if sc == "B":
                 if char in need_to_use:
@@ -65,7 +60,6 @@ input_validation(guesses, scores)
 
 options, need_to_use = convert_to_loc_limitation(guesses, scores)
 
-print(options, need_to_use)
 que = queue.Queue()
 
 for char in options[0]:
@@ -90,7 +84,6 @@ while not que.empty():
                 que.put([word+next_char, next_need_to_use])
             else:
                 if len(need_to_use) + len(word) < 5:
-                    print(need_to_use, word)
                     que.put([word+next_char, copy.copy(need_to_use)])
 
 print("DONE")
